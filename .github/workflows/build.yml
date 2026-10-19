@@ -22,6 +22,7 @@ jobs:
           cd proj
           sed -i 's/setUnlocalizedName/setTranslationKey/; s/getTabIconItem/createIcon/' src/main/java/com/soulland/mod/ModItems.java
           sed -i 's/lengthVector()/length()/' src/main/java/com/soulland/mod/SoulSkills.java
+          sed -i 's/SoundEvents.BLOCK_BEACON_ACTIVATE/SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP/; s/SoundEvents.BLOCK_BEACON_DEACTIVATE/SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP/' src/main/java/com/soulland/mod/SoulSkills.java
           for v in 2847 2855 2859 2860 2864; do
             sed -i "s/14\.23\.5\.[0-9]*/14.23.5.$v/" build.gradle
             echo "=== ลอง Forge 14.23.5.$v ==="
@@ -31,7 +32,8 @@ jobs:
             fi
             if grep -q "error:" build.log; then
               echo "=== COMPILE ERRORS (Forge $v) ==="
-              grep -A3 "error:" build.log | head -60
+              grep "error:" build.log | sed 's|.*/mod/||' | sort -u | head -40
+              grep -A1 "symbol:" build.log | grep "symbol:" | sort -u | head -20
               exit 1
             fi
             echo "=== ล้มเหลวที่ $v (ไม่ใช่ error คอมไพล์) ==="
